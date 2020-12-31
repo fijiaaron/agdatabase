@@ -3,115 +3,118 @@ livestockType.addEventListener("change", addLivestockType);
 
 var livestockQty = document.querySelector("#livestock_qty");
 livestockQty.addEventListener("keyup", addLivestockQty);
+livestockQty.addEventListener("change", addLivestockQty);
 
-var addLivestockButton = document.querySelector("#addLivestock");
+var addLivestockButton = document.querySelector("#add_livestock");
 addLivestockButton.addEventListener("click", addLivestock);
 
-var clearLivestockButton = document.querySelector("#clearLivestock");
+var clearLivestockButton = document.querySelector("#clear_livestock");
 clearLivestockButton.addEventListener("click", clearLivestock)
 
 var message = document.querySelector("#message");
 
-
 var livestock = retrieveLivestock();
 
-function addLivestockType(event) {
-    console.log("livestock type: " + livestockType.value);
-    if (livestockType.value) {
-        livestockQty.disabled = false;
-    }
-    else {
-        livestockQty.disabled = true;
-    }
+function addLivestockType(event)
+{
+    console.log("addLivestockType()...");
+    var type = livestockType.value;
+    console.log("type:", type);
+    
+    updateUI();
+
+    console.log("...addLivestockType()");
 }
 
-function addLivestockQty(event) {
-    console.log("livestock qty: " + livestockQty.value);
-    if (livestockQty.value && livestockQty.value != "") {
-        if (isNaN(livestockQty.value))
-        {
-            console.log("not a valid quantity: " + livestockQty.value);
+function addLivestockQty(event)
+{
+    console.log("addLivestockQty()...");
+    var qty = livestockQty.value;
+    console.log("qty: ", qty);
+
+    if (qty) {
+        if (isNaN(livestockQty.value)) {
+            console.log("invalid quantity: " + livestockQty.value);
             message.innerHTML = "quantity must be a number";
             message.classList.add("error");
-            addLivestock.disabled = true;
         }
         else {
             console.log("valid quantity: " + + livestockQty.value)
-            addLivestockButton.disabled = false;
             message.innerHTML = "";
             message.classList.remove("error");
         }
     }
-    else {
-        addLivestock.disabled = true;
-    }
+
+    updateUI();
+
+    console.log("...addLivestockQty()");
 }
 
-async function addLivestock(event) {
+async function addLivestock(event)
+{
     console.log("addLivestock()...");
 
     var type = livestockType.value;
     var qty = livestockQty.value;
 
-    if (! isNaN(qty))
-    {
-        qty = 1 * qty;
+    if (! type) {
+        console.log("invalid type");
+        return;
     }
 
-    console.log("adding livestock", type, 1*qty);
+    if (! qty || isNaN(qty)) {
+        console.log("invalid quantity");
+        return;
+    }
+
+    console.log("adding livestock", type, qty);
     message.innerHTML = `adding livestock: ${type} : ${qty}`;
     
     livestock = await retrieveLivestock();
-    console.log('existing livestock', livestock);
 
-    if (livestock[type] != undefined)
-    {
+    if (livestock && livestock[type]) {
         console.log(type + " already exists");
-        
-        livestock[type] = (1 * livestock[type]) + qty;
+        livestock[type] = (1 * qty) + livestock[type];
         console.log("added " + qty + " to " + type);
-
     }
-    else
-    {
+    else {
         console.log(type + " doesn't exist yet");
-        livestock[type] = qty;
+        livestock[type] = (1 * qty);
         console.log("created " + type + " with qty " + qty);
     }
 
     storeLivestock(livestock);
-    
     livestock = await retrieveLivestock();
+    console.log("livestock", livestock);
+
+    console.log("...addLivestock()");
 }
 
-async function retrieveLivestock()
+async function retrieveLivestock() 
 {
     console.log("retrieveLivestock()...");
     
     livestock = await localforage.getItem("livestock");
-    console.log("livestock", livestock);
 
-    if (livestock == undefined || livestock == null || livestock == "")
+    if (! livestock)
     {
         console.log("livestock has not been created yet, creating empty object");
         livestock = {};
-        clearLivestock.disabled = true;
     }
     else {
-        clearLivestock.disabled = false;
+        console.log("livestock retrieved from storage");
     }
 
     console.log("livestock", livestock);
-    livestockData.innerHTML = JSON.stringify(livestock, null, 1);
+    updateUI();
 
-
+    console.log("...retrieveLivestock()");
     return livestock;
-    
 }
 
 function storeLivestock()
 {
-    console.log("storeLivestock()");
+    console.log("storeLivestock()...");
 
     localforage.setItem("livestock", livestock, function (err) {
         if (err) {
@@ -122,11 +125,55 @@ function storeLivestock()
             retrieveLivestock();
         }
     });
+
+    updateUI();
+
+    console.log("...storeLivestock()");
+}
+
+function clearLivestock() {
+    console.log("clearLivestock()...");
+    localforage.removeItem("livestock");
+    livestock = retrieveLivestock();
+
+    updateUI();
+
+    console.log("...clearLivestock()");
+}
+
+function updateUI()
+{
+    console.log("updateUI()...");
+    var type = livestockType.value;
+    var qty = livestockQty.value;
+
+    if (! type) {
+        livestockQty.disabled = true;
+    }
+    else {
+        livestockQty.disabled = false;
+    }
+    
+    if (! qty || isNaN(qty) || livestockQty.disabled) {
+        addLivestockButton.disabled = true;
+    }
+    else {
+        addLivestockButton.disabled = false;
+    }
+
+    if (! livestock || isEmptyObject(livestock)) {
+        clearLivestockButton.disabled = true;
+    }
+    else {
+        clearLivestockButton.disabled = false;
+    }
+
+    livestockData.innerHTML = JSON.stringify(livestock, null, 1);
+    console.log("...updateUI()");
 }
 
 
-function clearLivestock() {
-    console.log("clear");
-    localforage.removeItem("livestock");
-    livestock = retrieveLivestock();
+function isEmptyObject(obj)
+{
+    return Object.keys(obj).length === 0;
 }
