@@ -1,4 +1,3 @@
-
 var livestockType = document.querySelector("#livestock_type");
 livestockType.addEventListener("change", addLivestockType);
 
@@ -44,7 +43,9 @@ function addLivestockQty(event) {
     }
 }
 
-function addLivestock(event) {
+async function addLivestock(event) {
+    console.log("addLivestock()...");
+
     var type = livestockType.value;
     var qty = livestockQty.value;
 
@@ -53,10 +54,10 @@ function addLivestock(event) {
         qty = 1 * qty;
     }
 
-    console.log("add livestock", type, qty);
+    console.log("adding livestock", type, qty);
     message.innerHTML = `adding livestock: ${type} : ${qty}`;
     
-    var livestock = retrieveLivestock();
+    livestock = await retrieveLivestock();
     console.log('existing livestock', livestock);
 
     if (livestock[type] != undefined)
@@ -73,31 +74,42 @@ function addLivestock(event) {
         livestock[type] = livestockQty.value;
         console.log("created " + type + " with qty " + qty);
     }
-    
-    localStorage.setItem("livestock", JSON.stringify(livestock));
 
-    livestock = retrieveLivestock();
+    storeLivestock(livestock);
+    
+    livestock = await retrieveLivestock();
 }
 
-function retrieveLivestock() {
-    console.log("retrieveLivestock() ...");
+async function retrieveLivestock()
+{
+    console.log("retrieveLivestock()...");
+    
+    livestock = await localforage.getItem("livestock");
+    console.log("livestock", livestock);
 
-    var livestockJSON = localStorage.getItem("livestock");
-    console.log("livestockJSON", livestockJSON);
-
-    var livestock = {};
-    if (livestockJSON && livestockJSON != "")
+    if (livestock == undefined || livestock == null || livestock == "")
     {
-        try {
-            livestock = JSON.parse(livestockJSON);
-        }
-        catch (e) {
-            console.warn(e);
-        }
+        console.log("livestock has not been created yet, creating empty object");
+         livestock = {};
     }
 
     console.log("livestock", livestock);
     livestockData.innerHTML = JSON.stringify(livestock, null, 1);
 
     return livestock;
+}
+
+function storeLivestock()
+{
+    console.log("storeLivestock()");
+
+    localforage.setItem("livestock", livestock, function (err) {
+        if (err) {
+            console.error("failed to save livestock to localforage", err);
+        }
+        else {
+            console.log("saved livestock to localforage");
+            retrieveLivestock();
+        }
+    });
 }
