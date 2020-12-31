@@ -1,0 +1,29 @@
+html, body {
+    font-family: serif;
+    font-size: 20px;
+    margin: 0;
+}
+.logo {
+    border: 0.3rem solid white;
+    border-radius: 5px;
+    padding: 0.3rem;
+    margin: 0.3rem;
+    margin-left: 0;
+}
+header {
+    color: white;
+    background-color: #33AA66;
+}
+.container > * {
+    padding: 0.5rem 4rem;
+}
+
+input, select, button, option {
+    font-size: larger;
+    padding: 0.2rem 0.4rem;
+    font-family: sans-serif;
+}
+
+input::placeholder {
+    color: #CCC;
+}

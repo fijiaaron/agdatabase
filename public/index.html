@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>AgDatabase</title>
+        <link rel="stylesheet" href="agdatabase.css">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1><span class="logo">Ag</span>Database</h1>
+            </header>
+            <main>
+                <h2>Livestock</h2>
+                <p> Input the type and quantity of your livestock </p>
+                <select name="livestock_type">
+                    <option value="">Livestock Type</option>
+                    <optgroup label="Cattle">
+                        <option value="cattle_beef">Cattle - beef </option>
+                        <option value="cattle_milk">Cattle - milk</option>
+                    </optgroup>
+                    <optgroup label="Chickens">
+                        <option value="chicken_layers">Chicken - layers</option>
+                        <option value="chicken_broilers">Chicken - broilers</option>
+                </optgroup>
+                    <option value="mink">Hogs</option>
+                    <option value="goats">Goats</option>
+                    <option value="sheep">Sheep</option>
+                    <option value-="mink">Mink</option>
+                    <option value-="horses">Horses</option>
+                </select>
+                <input type="text" name=livestock_qty size="4" maxlength="4" placeholder="qty" disabled>
+            </main>
+
+        </div>
+    <script src="livestock.js"></script>
+    </body>
+</html>
