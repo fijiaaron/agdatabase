@@ -1,6 +1,6 @@
 html, body {
     font-family: serif;
-    font-size: 20px;
+    font-size: 18px;
     margin: 0;
 }
 .logo {
@@ -13,17 +13,42 @@ html, body {
 header {
     color: white;
     background-color: #33AA66;
+    padding: 1rem 0rem;
 }
+
 .container > * {
-    padding: 0.5rem 4rem;
+    padding: 0.25rem 1rem;
+    margin: 0 auto;
 }
 
 input, select, button, option {
-    font-size: larger;
+    font-size: 16px;
     padding: 0.2rem 0.4rem;
     font-family: sans-serif;
 }
 
 input::placeholder {
     color: #CCC;
+}
+
+button {
+    color: white;
+    background-color: #33AA66;
+    border: 4px solid #33AA66;
+    border-radius: 5px;
+}
+
+button:disabled {
+    border-color: rgb(25, 75, 50);
+    border-color: rgb(25, 75, 50);
+    color: #33AA66
+}
+
+#message.error {
+    color: #AA3333;
+}
+
+pre#livestockData {
+    font-family: courier;
+    font-size: 14px;
 }
