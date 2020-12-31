@@ -7,7 +7,11 @@ livestockQty.addEventListener("keyup", addLivestockQty);
 var addLivestockButton = document.querySelector("#addLivestock");
 addLivestockButton.addEventListener("click", addLivestock);
 
+var clearLivestockButton = document.querySelector("#clearLivestock");
+clearLivestockButton.addEventListener("click", clearLivestock)
+
 var message = document.querySelector("#message");
+
 
 var livestock = retrieveLivestock();
 
@@ -54,7 +58,7 @@ async function addLivestock(event) {
         qty = 1 * qty;
     }
 
-    console.log("adding livestock", type, qty);
+    console.log("adding livestock", type, 1*qty);
     message.innerHTML = `adding livestock: ${type} : ${qty}`;
     
     livestock = await retrieveLivestock();
@@ -71,7 +75,7 @@ async function addLivestock(event) {
     else
     {
         console.log(type + " doesn't exist yet");
-        livestock[type] = livestockQty.value;
+        livestock[type] = qty;
         console.log("created " + type + " with qty " + qty);
     }
 
@@ -90,13 +94,19 @@ async function retrieveLivestock()
     if (livestock == undefined || livestock == null || livestock == "")
     {
         console.log("livestock has not been created yet, creating empty object");
-         livestock = {};
+        livestock = {};
+        clearLivestock.disabled = true;
+    }
+    else {
+        clearLivestock.disabled = false;
     }
 
     console.log("livestock", livestock);
     livestockData.innerHTML = JSON.stringify(livestock, null, 1);
 
+
     return livestock;
+    
 }
 
 function storeLivestock()
@@ -112,4 +122,11 @@ function storeLivestock()
             retrieveLivestock();
         }
     });
+}
+
+
+function clearLivestock() {
+    console.log("clear");
+    localforage.removeItem("livestock");
+    livestock = retrieveLivestock();
 }

@@ -50,8 +50,7 @@ button {
 
 button:disabled {
     border-color: rgb(25, 75, 50);
-    border-color: rgb(25, 75, 50);
-    color: #33AA66
+    color: rgb(25, 75, 50);
 }
 
 #message.error {
@@ -70,3 +69,4 @@ footer {
     font-size: 0.75rem;
     padding: 1em;
 }
+
